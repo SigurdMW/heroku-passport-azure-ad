@@ -19,7 +19,13 @@ const bodyParser = require("body-parser")
 
 const app = express()
 
-const { CLIENT_ID, CLIENT_SECRET, REPLY_URL, PORT, METADATA_URL, POLICY = "B2C_1A_SignInWithADFSIdp" } = process.env
+const { CLIENT_ID, CLIENT_SECRET, REPLY_URL, PORT, METADATA_URL, POLICY } = process.env
+
+logger("Client Id " + CLIENT_ID)
+logger("Reply URL " + REPLY_URL)
+logger("Port " + PORT)
+logger("Metadata URL " + METADATA_URL)
+logger("Policy " + POLICY)
 
 passport.serializeUser((user, done) => { done(null, user) })
 passport.deserializeUser((passportSession, done) => { done(null, passportSession) })
