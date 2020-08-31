@@ -176,7 +176,7 @@ app.get("/auth/retry", (req, res, next) => {
 	const retryBefore = req.session.loginRetryCount
 	req.session.loginRetryCount = (req.session.loginRetryCount || 0) + 1
 	logger("Login retry count before is: " + retryBefore + " and after is: " + req.session.loginRetryCount)
-	res.redirect("/auth/login")
+	res.redirect("/login")
 })
 
 
@@ -206,11 +206,16 @@ const refreshTokenMiddleware = async (req, res, next) => {
 		if (!refreshToken) {
 			return next(new Error("No refresh token received"))
 		}
-		logger("Got refresh token")
+		logger("Got existing refresh token from session")
 
-		const metadataResponse = await axios.get(METADATA_URL)
+		const metadataUrl = new URL(METADATA_URL)
+		metadataUrl.searchParams.append("p", POLICY)
+		const metadataResponse = await axios.get(metadataUrl.toString())
+
+		logger("Did get metadata response")
+
 		const tokenEndpointUrl = new URL(metadataResponse.data.token_endpoint)
-		tokenEndpointUrl.searchParams.append("p", POLICY)
+		// tokenEndpointUrl.searchParams.append("p", POLICY)
 		const form = new FormData()
 		form.append("client_id", CLIENT_ID)
 		form.append("client_secret", CLIENT_SECRET)
